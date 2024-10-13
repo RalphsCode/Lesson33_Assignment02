@@ -1,0 +1,21 @@
+{
+  "name": "express-biztime",
+  "version": "1.0.0",
+  "description": "Testing Node Express & Router, with Postgres SQL via PG",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [
+    "Node",
+    "Express",
+    "Router",
+    "SQL",
+    "Postgress",
+    "PG",
+    "invoice"
+  ],
+  "author": "RalphsCode",
+  "license": "ISC"
+}
