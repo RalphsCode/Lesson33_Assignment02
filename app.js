@@ -2,7 +2,7 @@
 
 
 const express = require("express");
-
+const db = require("./db")
 const app = express();
 const ExpressError = require("./expressError")
 
