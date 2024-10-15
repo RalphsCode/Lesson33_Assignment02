@@ -8,8 +8,13 @@ const db = require("./db")
 
 app.use(express.json());
 
+// All routes in companies directory
 const companiesRoutes = require("./routes/companies");
-app.use("/companies", companiesRoutes);  // All routes in companies directory
+app.use("/companies", companiesRoutes);  
+
+// All routes in invoices directory
+const invoicesRoutes = require("./routes/invoices");
+app.use("/invoices", invoicesRoutes);  
 
 
 /** 404 handler */

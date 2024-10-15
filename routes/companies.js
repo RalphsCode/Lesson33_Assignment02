@@ -27,6 +27,20 @@ router.get("/:code", async function (req, res, next) {
    return next(err); } });
 
 
+// Add a company
+router.post("/", async function (req, res, next) {
+    try { 
+
+    const newCode = req.body.code;
+    const newName = req.body.name;
+    const newDesc = req.body.desc || 'none';
+
+   const results = await db.query( 'INSERT INTO companies (code, name, description) VALUES ($1, $2, $3) RETURNING code, name, description', [newCode, newName, newDesc]); 
+   return res.json({company: results.rows[0]}); 
+   } catch (err) { 
+   return next(err); } });
+
+
 // Update a company
 router.put("/:code", async function (req, res, next) {
     try { 
@@ -54,19 +68,6 @@ router.put("/:code", async function (req, res, next) {
    } catch (err) { 
    return next(err); } });
 
-
-// Add a company
-router.post("/", async function (req, res, next) {
-    try { 
-
-    const newCode = req.body.code;
-    const newName = req.body.name;
-    const newDesc = req.body.desc || 'none';
-
-   const results = await db.query( 'INSERT INTO companies (code, name, description) VALUES ($1, $2, $3) RETURNING code, name, description', [newCode, newName, newDesc]); 
-   return res.json({company: results.rows[0]}); 
-   } catch (err) { 
-   return next(err); } });
 
 
 // Delete a Company
