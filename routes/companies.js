@@ -7,7 +7,7 @@ const ExpressError = require("../expressError")
 // Return code & name for all companies
 router.get("/", async function (req, res, next) {
     try { 
-   const results = await db.query( `SELECT code, name FROM companies`); 
+   const results = await db.query( 'SELECT code, name FROM companies'); 
    return res.json({companies: results.rows}); 
    } catch (err) { 
    return next(err); } });
