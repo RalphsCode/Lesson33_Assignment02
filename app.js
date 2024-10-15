@@ -9,7 +9,7 @@ const db = require("./db")
 app.use(express.json());
 
 const companiesRoutes = require("./routes/companies");
-app.use("/", companiesRoutes);
+app.use("/companies", companiesRoutes);  // All routes in companies directory
 
 
 /** 404 handler */
