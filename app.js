@@ -2,11 +2,14 @@
 
 
 const express = require("express");
-const db = require("./db")
 const app = express();
 const ExpressError = require("./expressError")
+const db = require("./db")
 
 app.use(express.json());
+
+const companiesRoutes = require("./routes/companies");
+app.use("/", companiesRoutes);
 
 
 /** 404 handler */

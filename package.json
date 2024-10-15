@@ -19,6 +19,7 @@
   "author": "RalphsCode",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.21.1"
+    "express": "^4.21.1",
+    "pg": "^8.13.0"
   }
 }
