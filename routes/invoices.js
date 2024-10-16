@@ -27,9 +27,46 @@ router.get("/:id", async function (req, res, next) {
           }
 
         // Return
-        return res.json({invoice : result.rows}); 
+        const invoice = result.rows[0];
+
+        // Nest the company data within the invoice object
+        const invoiceData = {
+          id: invoice.id,
+          amt: invoice.amt,
+          paid: invoice.paid,
+          add_date: invoice.add_date,
+          paid_date: invoice.paid_date,
+          company: {
+            code: invoice.code,
+            name: invoice.name,
+            description: invoice.description
+          }
+        };
+        
+        return res.json({ invoice: invoiceData });
+                
     } catch (err) { 
-        return next(err); } });
+                return next(err); } });
    
+
+
+// Add a new Invoice
+router.post("/", async function (req, res, next) {
+    try { 
+
+        const postInvoice = await db.query( 'INSERT INTO invoices (comp_code, amt ) VALUES ($1, $2) RETURNING id', [req.body.comp_code, req.body.amt] ); 
+
+        const newInvoiceId = postInvoice.rows[0].id;
+
+        // Select the new invoice using the id
+        const newInvoice = await db.query('SELECT * FROM invoices WHERE id = $1', [newInvoiceId]);
+
+        console.log('newInvoice:', newInvoice.rows[0].id);
+         
+        return res.json({invoice: newInvoice.rows[0]} ); 
+   } catch (err) { 
+        return next(err); } });                
+
+
 
 module.exports = router;
