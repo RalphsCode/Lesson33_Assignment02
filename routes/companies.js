@@ -16,15 +16,37 @@ router.get("/", async function (req, res, next) {
 // Return a specific company
 router.get("/:code", async function (req, res, next) {
     try { 
-   const results = await db.query( 'SELECT * FROM companies WHERE code = $1', [req.params.code]); 
-    // Custom error if code not found
-   if (results.rows.length === 0) {
-    return next(new ExpressError('Company not found', 404));
-  }
-    // Response
-   return res.json({company: results.rows}); 
+        // Request the company info from the db
+        const companyResult = await db.query( 'SELECT * FROM companies WHERE code = $1', [req.params.code]); 
+
+        // If company code not found
+        if (companyResult.rows.length === 0) {
+            return next(new ExpressError('Company not found', 404));
+            }
+
+        // Request the invoice info from the db
+        const invoiceResults = await db.query( 'SELECT * FROM invoices WHERE comp_code = $1', [req.params.code]); 
+        
+        // Put the company & invoice details in objects
+        const company = companyResult.rows[0];
+        const foundInvoices = invoiceResults.rows;
+
+        // Nest the invoice data within an company object
+        const companyData = {
+        code: company.code,
+        name: company.name,
+        description: company.description,
+        invoices: {foundInvoices}
+        }
+          
+        // Response
+        return res.json({company: companyData}); 
+        
+    // Handle error gracefully
    } catch (err) { 
-   return next(err); } });
+   return next(err); } 
+});  // END get specific company route
+
 
 
 // Add a company
