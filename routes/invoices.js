@@ -83,7 +83,7 @@ router.post("/", async function (req, res, next) {
 // Update An Invoice - Should really be a PATCH not a PUT route
 router.put("/", async function (req, res, next) {
     try { 
-        // Select the new invoice using the id
+        // Select the invoice using the id
         const findInvoice = await db.query('SELECT * FROM invoices WHERE amt = $1', [req.body.amt]);
 
         // If invoice amt not found
@@ -93,15 +93,29 @@ router.put("/", async function (req, res, next) {
         
         // Assign the invoice ID for the invoice to update
         const updateInvoiceID = findInvoice.rows[0].id ; 
+
+        let updatedPaidDate = req.body.paid_date || findInvoice.rows[0].paid_date;
         
+        let updatedPaid = findInvoice.rows[0].paid;
+
+        if (req.body.paid != String(findInvoice.rows[0].paid)) {
+            updatedPaid = req.body.paid;
+            // If invoice is paid - set the paid date to today
+            if (updatedPaid === 'true') {
+                updatedPaidDate = new Date().toISOString();
+            } else if (updatedPaid === 'false') {
+                updatedPaidDate = null;
+            }
+            console.log("updatedPaid:", updatedPaid, "updatedPaidDate:", updatedPaidDate);
+        }
+
         // Define the values for the updated invoice
         const updatedCompCode = req.body.comp_code || findInvoice.rows[0].comp_code;
-        const updatedPaid = req.body.paid || findInvoice.rows[0].paid;
+        
         const updatedAddDate = req.body.add_date || findInvoice.rows[0].add_date;
-        const updatedPaidDate = req.body.paid_date || findInvoice.rows[0].paid_date;
 
         // Update the invoice in the db
-        const updatedInvoice = await db.query('UPDATE invoices SET comp_code = $1, paid = $2, add_date = $3, paid_date = $4 WHERE id = $5', [updatedCompCode, updatedPaid, updatedAddDate, updatedPaidDate, updateInvoiceID]);
+        await db.query('UPDATE invoices SET comp_code = $1, paid = $2, add_date = $3, paid_date = $4 WHERE id = $5', [updatedCompCode, updatedPaid, updatedAddDate, updatedPaidDate, updateInvoiceID]);
          
         // Select the updated invoice
         const newInvoice = await db.query('SELECT * FROM invoices WHERE id = $1', [updateInvoiceID]);
