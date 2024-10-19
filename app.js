@@ -16,6 +16,10 @@ app.use("/companies", companiesRoutes);
 const invoicesRoutes = require("./routes/invoices");
 app.use("/invoices", invoicesRoutes);  
 
+// All routes in industries directory
+const industryRoutes = require("./routes/industries");
+app.use("/industries", industryRoutes);  
+
 
 /** 404 handler */
 

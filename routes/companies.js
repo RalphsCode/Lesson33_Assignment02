@@ -1,7 +1,7 @@
 const express = require("express");    // require express just to get router
 const router = new express.Router();
 const db = require("../db")
-const ExpressError = require("../expressError")
+const ExpressError = require("../expressError");
 const slugify = require('slugify');
 
 
@@ -27,17 +27,23 @@ router.get("/:code", async function (req, res, next) {
 
         // Request the invoice info from the db
         const invoiceResults = await db.query( 'SELECT * FROM invoices WHERE comp_code = $1', [req.params.code]); 
+
+        // Request the industry info from the db
+        const industryResults = await db.query(
+            'SELECT industries.industry FROM companies JOIN company_industry ON companies.code = company_industry.company_code JOIN industries ON company_industry.industry_code = industries.code WHERE companies.code = $1', [req.params.code])
         
         // Put the company & invoice details in objects
         const company = companyResult.rows[0];
         const foundInvoices = invoiceResults.rows;
+        const foundIndustries = industryResults.rows;
 
         // Nest the invoice data within an company object
         const companyData = {
         code: company.code,
         name: company.name,
         description: company.description,
-        invoices: {foundInvoices}
+        invoices: {foundInvoices},
+        industries: {foundIndustries}
         }
           
         // Response
