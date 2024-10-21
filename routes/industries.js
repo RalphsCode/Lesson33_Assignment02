@@ -2,7 +2,6 @@ const express = require("express");    // require express just to get router
 const router = new express.Router();
 const db = require("../db")
 const ExpressError = require("../expressError");
-const { name } = require("../app");
 
 
 // Return details for all industries and related companies
@@ -40,5 +39,38 @@ router.get("/", async function (req, res, next) {
     return next(err); } });
 //  END Return all Industries Route
 
+
+// Add an Industry Route
+router.post("/", async function (req, res, next) {
+    // Pass in the new Industry code and industry name in the API body.
+    try {
+        // Get the new industry info
+        const { code, industry } = req.body;
+        // Insert the data into the Database
+        const results = await db.query( 'INSERT INTO industries (code, industry) VALUES ($1, $2)', [code, industry] )
+
+        // Return code 201
+        return res.status(201).json(`${industry} created successfully.`)
+
+    } catch(err) {
+        return next(err); }    
+} )   // END post route
+
+
+// Associate an Industry and a Company
+router.post("/relationship", async function (req, res, next) {
+    // Pass in the company_code &  industry_code in the API body.
+    try {
+        // Get the details from the api body
+        const { company_code, industry_code } = req.body;
+        // Submit to the database
+        const results = await db.query( 'INSERT INTO company_industry (company_code, industry_code) VALUES ($1, $2)', [company_code, industry_code]);
+
+        // Return code 201
+        return res.status(201).json(`${company_code}-${industry_code} relationship established.`)
+
+    } catch(err) {
+        return next(err); 
+    } }) // END associate route
 
 module.exports = router; 
